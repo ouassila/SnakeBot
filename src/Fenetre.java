@@ -73,17 +73,17 @@ public class Fenetre extends JFrame {
 		this.add(LabelScore,BorderLayout.SOUTH);
 		this.addKeyListener(new KeyListener() {
 
-			@Override
+
 			public void keyTyped(KeyEvent arg0) {
 				// TODO Auto-generated method stub
 			}
 
-			@Override
+	
 			public void keyReleased(KeyEvent arg0) {
 				// TODO Auto-generated method stub
 			}
 
-			@Override
+
 			public void keyPressed(KeyEvent arg0) {
 				// TODO Auto-generated method stub				
 			}
@@ -136,7 +136,7 @@ public class Fenetre extends JFrame {
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
 				
 				Collision col = new Collision(T.getX(), T.getY());
-				col.writeFile();
+			//	col.writeFile();
 				
 				System.out.println("GAME OVER");
 				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -185,7 +185,7 @@ public class Fenetre extends JFrame {
 		TRapide.addActionListener(new VitesseListener());
 		NouveauJeu.addActionListener(new ActionListener() {
 
-			@Override
+	
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Score=0;LabelScore.setText("SCORE: 0");
@@ -194,7 +194,7 @@ public class Fenetre extends JFrame {
 		});
 		Quiter.addActionListener(new ActionListener() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				System.exit(0);
@@ -203,7 +203,7 @@ public class Fenetre extends JFrame {
 		Control.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("static-access")
-			@Override
+	
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Information.showMessageDialog(null,"Haut -> déplacez en haut\nBas -> déplacez en Bas\nDroite -> déplacez à droite\nGauche -> déplacez à gauche\n p   -> Pause","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -212,7 +212,7 @@ public class Fenetre extends JFrame {
 		Apropos.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("static-access")
-			@Override
+		
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Information.showMessageDialog(null,"Réaliser par:\n              ANJDEV","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -221,7 +221,7 @@ public class Fenetre extends JFrame {
 
 		Pause.addActionListener(new ActionListener() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				if(pause){Snake.setDirection(direction);pause=false;}
@@ -232,7 +232,7 @@ public class Fenetre extends JFrame {
 	}
 	class VitesseListener implements ActionListener{
 
-		@Override
+
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			if(arg0.getSource()==TLent) vitesse=1000;
