@@ -5,6 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
@@ -49,7 +55,8 @@ public class Fenetre extends JFrame {
 
 	public Fenetre(){
 
-		bot = new IA();
+		bot = new IA();		
+		
 		this.setTitle("Snake");
 		this.setLocation(200,30);
 		this.setSize(630,700);
@@ -81,7 +88,12 @@ public class Fenetre extends JFrame {
 				// TODO Auto-generated method stub				
 			}
 		});		
-		Start();
+		try {
+			Start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public void RandObjectif(){
 		Random Rand=new Random();
@@ -98,7 +110,7 @@ public class Fenetre extends JFrame {
 		}
 
 	}
-	public void Start(){		
+	public void Start() throws IOException{	
 		while(true){			
 			bot.bouger(Snake, this);
 			Jouer(1);
@@ -113,23 +125,37 @@ public class Fenetre extends JFrame {
 
 	@SuppressWarnings("static-access")
 	public void Jouer(int a){
+		
 		if((Snake.getTete().getX()==Objectif.getX())&&(Snake.getTete().getY()==Objectif.getY()))
-		{Snake.AjouterCarré();RandObjectif();Score+=10;
-		LabelScore.setText("SCORE: "+Score);
+		{
+			Snake.AjouterCarré();RandObjectif();Score+=10;
+			LabelScore.setText("SCORE: "+Score);
 		}
 		else if(a!=0)Snake.AvancerSerpent();
-		for(Carré T:Snake.getSuit())
+		for(Carré T:Snake.getSuit()){
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
+				
+				Collision col = new Collision(T.getX(), T.getY());
+				col.writeFile();
+				
 				System.out.println("GAME OVER");
 				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
-				Snake.Réinitialiser();Score=0;LabelScore.setText("SCORE: 0");break;
+				Snake.Réinitialiser();
+				Score=0;
+				LabelScore.setText("SCORE: 0");
+				break;
 			}
+		}
 		if(Snake.getTete().getX()<0||Snake.getTete().getX()>20*30-40||Snake.getTete().getY()<0||Snake.getTete().getY()>20*30-40)
 		{
-			System.out.println(Snake.getTete().getX());
+			Collision col = new Collision(Snake.getTete().getX(), Snake.getTete().getY());	
+			col.writeFile();
+			
 			System.out.println("GAME OVER");
 			Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
-			Snake.Réinitialiser();Score=0;LabelScore.setText("SCORE: 0");
+			Snake.Réinitialiser();
+			Score=0;
+			LabelScore.setText("SCORE: 0");
 		}
 		PlateauJeu1.repaint();
 

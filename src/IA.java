@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,7 +15,7 @@ public class IA {
 		directions.add(40);
 	}
 	
-	public void bouger(Serpent snake, Fenetre fenetre){
+	public void bouger(Serpent snake, Fenetre fenetre) throws IOException{
 		Random randomizer = new Random();
 		int direction = directions.get(randomizer.nextInt(directions.size()));
 		
