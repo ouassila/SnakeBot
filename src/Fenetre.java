@@ -96,7 +96,7 @@ public class Fenetre extends JFrame {
 		}
 	}
 	public void RandObjectif(){
-		Random Rand=new Random();
+		/*Random Rand=new Random();
 		int IndexX=Rand.nextInt(28);
 		int IndexY=Rand.nextInt(28);
 		Objectif.setX(IndexX*20);
@@ -107,8 +107,9 @@ public class Fenetre extends JFrame {
 			}
 		if(IndexX*20==Snake.getTete().getX()&&IndexY*20==Snake.getTete().getY()){
 			this.RandObjectif();
-		}
-
+		}*/
+		Objectif.setX(50);
+		Objectif.setY(50);
 	}
 	public void Start() throws IOException{	
 		while(true){			
@@ -128,7 +129,9 @@ public class Fenetre extends JFrame {
 		
 		if((Snake.getTete().getX()==Objectif.getX())&&(Snake.getTete().getY()==Objectif.getY()))
 		{
-			Snake.AjouterCarré();RandObjectif();Score+=10;
+			Snake.AjouterCarré();
+			RandObjectif();
+			Score+=10;
 			LabelScore.setText("SCORE: "+Score);
 		}
 		else if(a!=0)Snake.AvancerSerpent();
