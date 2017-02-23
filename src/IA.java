@@ -27,8 +27,8 @@ public class IA {
 	public static int SCORE_BOTTOM = 5;
 	public static int SCORE_COLLISION = -80;
 	public static int SCORE_POMME = 100;
-	public static int SCORE_VERS_POMME = 30;
-	public static int SCORE_NON_VERS_POMME = -20;
+	public static int SCORE_VERS_POMME = 1000;
+	public static int SCORE_NON_VERS_POMME = -200;
 
 	private int score, bestValue;
 
@@ -64,7 +64,6 @@ public class IA {
 		return -1;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateMemory(String action, int result){
 		try {
 			String state = action +":"+result;
@@ -79,12 +78,11 @@ public class IA {
 
 			if(lastState!=null){
 				Type listType = new TypeToken<ArrayList<String>>(){}.getType();
-				//List<String> adj = new Gson().fromJson(memories.get(lastState).get("adjacentTo"), listType);
-				/*
+				List<String> adj = new Gson().fromJson(memories.get(lastState).get("adjacentTo").toString(), listType);
+				
 				if(adj.indexOf(state)==-1){					
 					adj.add(state);
 				}
-				*/
 			}
 			score+= result;
 			lastState= state;
@@ -99,14 +97,19 @@ public class IA {
 
 	public String chooseBestAction(){	
 		String action = "";
+		
 		if(memories.size() < 10){
 			return listAction.get((int) Math.floor(Math.random()*this.listAction.size()));
-		} else
+		} else{
+			
 			try {
-				if(((ArrayList<String>)memories.get(lastState).get("adjacentTo")).size()<10-1){
+				Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+				List<String> adj = new Gson().fromJson(memories.get(lastState).get("adjacentTo").toString(), listType);
+			
+				if(adj.size()<10-1){
 					do{
 						action = this.listAction.get((int)Math.floor(Math.random()*this.listAction.size()));
-					}while(((ArrayList<String>)memories.get(lastState).get("adjacentTo")).indexOf(action)!=-1);
+					}while(adj.indexOf(action)!=-1);
 					return action;
 				}
 				else{			
@@ -114,7 +117,7 @@ public class IA {
 					int selectedValue= -1000;
 					ArrayList<JSONObject> selectedResult = new ArrayList<JSONObject>();
 					
-					for(String item : ((ArrayList<String>)memories.get(lastState).get("adjacentTo"))){
+					for(String item : adj){
 						
 						if(memories.get(item).getInt("result") > selectedValue){
 							selectedValue = memories.get(item).getInt("result");
@@ -135,14 +138,14 @@ public class IA {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
 		return "";
 	}
 
 	public void bouger(Serpent snake, Fenetre fenetre) throws IOException{
 
 		String direct = chooseBestAction();
-		System.out.println(direct);
-
+		
 		if(direct == "left" && snake.getDirection()!="right"){
 			score = SCORE_LEFT;
 			snake.setDirection("left");fenetre.Jouer(0);			

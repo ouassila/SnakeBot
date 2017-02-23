@@ -48,7 +48,7 @@ public class Fenetre extends JFrame {
 			Moyenne=new JRadioButtonMenuItem("Moyenne"),
 			Rapide=new JRadioButtonMenuItem("Rapide"),
 			TRapide=new JRadioButtonMenuItem("Trés rapide"); 
-	private int vitesse=800,Score=0;
+	private int vitesse=20,Score=0;
 	private boolean pause=false;
 	String direction; 
 	private IA bot;
@@ -122,6 +122,7 @@ public class Fenetre extends JFrame {
 			Snake.AjouterCarré();
 			RandObjectif();
 			Score+=10;
+			System.out.println("POMME MANGER");
 			//LabelScore.setText("SCORE: "+bot.getScore());
 		}
 		else {
@@ -130,8 +131,6 @@ public class Fenetre extends JFrame {
 				old_distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
 				Snake.AvancerSerpent();
 				distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
-				
-				System.out.println(distance +" != "+ old_distance);
 				
 				if (distance > old_distance)
 					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_NON_VERS_POMME));
@@ -148,7 +147,7 @@ public class Fenetre extends JFrame {
 				bot.updateMemory(Snake.getDirection(), bot.SCORE_COLLISION);
 
 				System.out.println("GAME OVER");
-				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
+				//Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 				Snake.Réinitialiser();
 				Score=0;
 				LabelScore.setText("SCORE: 0");
@@ -160,7 +159,7 @@ public class Fenetre extends JFrame {
 			bot.updateMemory(Snake.getDirection(), bot.SCORE_COLLISION);
 
 			System.out.println("GAME OVER");
-			Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
+			//Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 			Snake.Réinitialiser();
 			Score=0;
 			LabelScore.setText("SCORE: 0");
