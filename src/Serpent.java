@@ -4,10 +4,10 @@ import java.util.ArrayList;
 public class Serpent {
 	private int NbrCarré;
 	private Carré Tete;
-	private char Direction;
+	private String Direction;
 	private ArrayList<Carré> Suit= new ArrayList<Carré>();
 	
-	public Serpent(char Direction){
+	public Serpent(String Direction){
 		NbrCarré=3;
 		this.Direction=Direction;
 		Tete=new Carré(60,280,20);
@@ -24,21 +24,28 @@ public class Serpent {
 		Suit.get(0).setY(Tete.getY());
 	}
 	public void AvancerSerpent(){
-		switch(this.Direction){
-			case 'H':DeplacementCarré();
-				Tete.setY(Tete.getY()-Tete.getTailleCarré());break;
-			case 'B':DeplacementCarré();
-				Tete.setY(Tete.getY()+Tete.getTailleCarré());break;
-			case 'G':DeplacementCarré();
-				Tete.setX(Tete.getX()-Tete.getTailleCarré());break;
-			case 'D':DeplacementCarré();
-				Tete.setX(Tete.getX()+Tete.getTailleCarré());break;
+		
+		if(Direction == "left"){
+			DeplacementCarré();
+			Tete.setY(Tete.getY()-Tete.getTailleCarré());
 		}
+		if(Direction == "bottom"){
+			DeplacementCarré();
+			Tete.setY(Tete.getY()+Tete.getTailleCarré());
+		}
+		if(Direction == "left"){
+			DeplacementCarré();
+			Tete.setX(Tete.getX()-Tete.getTailleCarré());
+		}
+		if(Direction == "right"){
+			DeplacementCarré();
+			Tete.setX(Tete.getX()+Tete.getTailleCarré());
+		}		
 	}
 	public void Réinitialiser(){
 		this.Suit.clear();
 		NbrCarré=3;
-		this.Direction='X';
+		this.Direction="X";
 		Tete=new Carré(60,280,20);
 		Suit.add(new Carré(Tete.getX()-Tete.getTailleCarré(),Tete.getY(),Tete.getTailleCarré()));
 		for(int i=1;i<NbrCarré;i++)
@@ -51,10 +58,10 @@ public class Serpent {
 		this.NbrCarré++;
 		Suit.add(new Carré(X,Y,this.Tete.getTailleCarré()));
 	}
-	public void setDirection(char Direction){
+	public void setDirection(String Direction){
 		this.Direction=Direction;
 	}
-	public char getDirection(){
+	public String getDirection(){
 		return this.Direction;
 	}
 	public Carré getTete(){

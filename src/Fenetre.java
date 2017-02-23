@@ -31,7 +31,7 @@ public class Fenetre extends JFrame {
 	 */
 	private static final long serialVersionUID = 9134711996673092449L;
 	private Carré Objectif=new Carré(0,0,20);
-	private Serpent Snake=new Serpent('X');
+	private Serpent Snake=new Serpent("X");
 	private PlateauJeu PlateauJeu1;
 	private JLabel LabelScore=new JLabel("SCORE: 0");
 	private JMenuBar MenuPrincipale=new JMenuBar();
@@ -50,13 +50,13 @@ public class Fenetre extends JFrame {
 			TRapide=new JRadioButtonMenuItem("Trés rapide"); 
 	private int vitesse=200,Score=0;
 	private boolean pause=false;
-	char direction; 
+	String direction; 
 	private IA bot;
 
 	public Fenetre(){
 
 		bot = new IA();		
-		
+
 		this.setTitle("Snake");
 		this.setLocation(200,30);
 		this.setSize(630,700);
@@ -78,7 +78,7 @@ public class Fenetre extends JFrame {
 				// TODO Auto-generated method stub
 			}
 
-	
+
 			public void keyReleased(KeyEvent arg0) {
 				// TODO Auto-generated method stub
 			}
@@ -114,7 +114,7 @@ public class Fenetre extends JFrame {
 
 	@SuppressWarnings("static-access")
 	public void Jouer(int a){
-		
+
 		if((Snake.getTete().getX()==Objectif.getX())&&(Snake.getTete().getY()==Objectif.getY()))
 		{
 			Snake.AjouterCarré();
@@ -122,12 +122,17 @@ public class Fenetre extends JFrame {
 			Score+=10;
 			LabelScore.setText("SCORE: "+Score);
 		}
-		else if(a!=0)Snake.AvancerSerpent();
+		else {
+			if(a!=0){
+				Snake.AvancerSerpent();
+				bot.updateMemory(Snake.getDirection()+"", bot.getScore());
+			}
+		}
 		for(Carré T:Snake.getSuit()){
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
-				
-				Collision col = new Collision(T.getX(), T.getY());
-			
+
+				bot.updateMemory(Snake.getDirection()+"", bot.SCORE_COLLISION);
+
 				System.out.println("GAME OVER");
 				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 				Snake.Réinitialiser();
@@ -138,9 +143,8 @@ public class Fenetre extends JFrame {
 		}
 		if(Snake.getTete().getX()<0||Snake.getTete().getX()>20*30-40||Snake.getTete().getY()<0||Snake.getTete().getY()>20*30-40)
 		{
-			Collision col = new Collision(Snake.getTete().getX(), Snake.getTete().getY());	
-			col.writeFile();
-			
+			bot.updateMemory(Snake.getDirection()+"", bot.SCORE_COLLISION);
+
 			System.out.println("GAME OVER");
 			Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 			Snake.Réinitialiser();
@@ -175,7 +179,7 @@ public class Fenetre extends JFrame {
 		TRapide.addActionListener(new VitesseListener());
 		NouveauJeu.addActionListener(new ActionListener() {
 
-	
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Score=0;LabelScore.setText("SCORE: 0");
@@ -184,7 +188,7 @@ public class Fenetre extends JFrame {
 		});
 		Quiter.addActionListener(new ActionListener() {
 
-			
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				System.exit(0);
@@ -193,7 +197,7 @@ public class Fenetre extends JFrame {
 		Control.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("static-access")
-	
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Information.showMessageDialog(null,"Haut -> déplacez en haut\nBas -> déplacez en Bas\nDroite -> déplacez à droite\nGauche -> déplacez à gauche\n p   -> Pause","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -202,7 +206,7 @@ public class Fenetre extends JFrame {
 		Apropos.addActionListener(new ActionListener() {
 
 			@SuppressWarnings("static-access")
-		
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Information.showMessageDialog(null,"Réaliser par:\n              ANJDEV","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -211,11 +215,18 @@ public class Fenetre extends JFrame {
 
 		Pause.addActionListener(new ActionListener() {
 
-			
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				if(pause){Snake.setDirection(direction);pause=false;}
-				else{direction=Snake.getDirection();Snake.setDirection('x');pause=true;}
+				if(pause){
+					Snake.setDirection(direction);
+					pause=false;
+				}
+				else{
+					direction=Snake.getDirection();
+					Snake.setDirection("x");
+					pause=true;
+				}
 			}
 		});
 

@@ -16,8 +16,17 @@ public class IA {
 	private ArrayList<JSONObject> memories = new ArrayList<JSONObject>();
 	private String lastAction;
 	private Map<String, Integer> sequences;
+	
+	public static int SCORE_LEFT = -5;
+	public static int SCORE_RIGHT = -5;
+	public static int SCORE_TOP = 10;
+	public static int SCORE_BOTTOM = 5;
+	public static int SCORE_COLLISION = -20;
+	
+	private int score;
 
 	public IA(){
+		score = 0;
 		directions = new ArrayList<Integer>();
 		directions.add(37);
 		directions.add(38);
@@ -31,9 +40,9 @@ public class IA {
 		
 		sequences = new HashMap<String, Integer>();
 		nbrNodes= 0;		
-	}
+	}	
 
-	public void updateMemory(String action, String result){
+	public void updateMemory(String action, int result){
 		try {
 			JSONObject memory = new JSONObject();
 			memory.put("action", action);
@@ -80,6 +89,7 @@ public class IA {
 
 			for(Entry<String, Integer> n : sequences.entrySet()) {
 
+				System.out.println(n.getKey());
 				if(n.getKey().substring(0, n.getKey().indexOf(".")) == lastAction){
 					if(n.getValue()>bestPerformance){
 						bestPerformance= n.getValue();
@@ -152,13 +162,29 @@ public class IA {
 		String direct = chooseBestAction();
 		System.out.println(direct);
 		
-		if(direct == "left" && snake.getDirection()!='D' && snake.getDirection()!='X')
-			snake.setDirection('G');fenetre.Jouer(0);
-		if(direct == "top" && snake.getDirection()!='B')
-			snake.setDirection('H');fenetre.Jouer(0);
-		if(direct == "right" && snake.getDirection()!='G')
-			snake.setDirection('D');fenetre.Jouer(0);
-		if(direct == "bottom" && snake.getDirection()!='H')
-			snake.setDirection('B');fenetre.Jouer(0);
+		if(direct == "left" && snake.getDirection()!="right" && snake.getDirection()!= "X"){
+			score = SCORE_LEFT;
+			snake.setDirection("left");fenetre.Jouer(0);			
+		}
+		if(direct == "top" && snake.getDirection()!="bottom"){
+			score = SCORE_TOP;
+			snake.setDirection("top");fenetre.Jouer(0);			
+		}
+		if(direct == "right" && snake.getDirection()!= "left"){
+			score = SCORE_RIGHT;
+			snake.setDirection("right");fenetre.Jouer(0);			
+		}
+		if(direct == "bottom" && snake.getDirection()!="top"){
+			score = SCORE_BOTTOM;
+			snake.setDirection("bottom");fenetre.Jouer(0);			
+		}
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}	
 }
