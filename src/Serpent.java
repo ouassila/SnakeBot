@@ -25,7 +25,7 @@ public class Serpent {
 	}
 	public void AvancerSerpent(){
 		
-		if(Direction == "left"){
+		if(Direction == "top"){
 			DeplacementCarré();
 			Tete.setY(Tete.getY()-Tete.getTailleCarré());
 		}

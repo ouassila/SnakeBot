@@ -87,26 +87,18 @@ public class IA {
 			int bestPerformance = 0;
 			String selectedSequence = "";
 
+
 			for(Entry<String, Integer> n : sequences.entrySet()) {
 
-				System.out.println(n.getKey());
-				if(n.getKey().substring(0, n.getKey().indexOf(".")) == lastAction){
+				if(n.getKey().indexOf(".") != -1 && n.getKey().substring(0, n.getKey().indexOf(".")) == lastAction){
 					if(n.getValue()>bestPerformance){
 						bestPerformance= n.getValue();
 						selectedSequence = n.getKey();
 					}
-				}			    
+				}	
 			}
 
-			for(Entry<String, Integer> n : sequences.entrySet()) {
-				if(n.getKey().substring(0, n.getKey().indexOf("."))==lastAction){
-					if(n.getValue()> bestPerformance){
-						bestPerformance = n.getValue();
-						selectedSequence = n.getKey();
-					}
-				}
-			}
-			if(selectedSequence != ""){
+			if(selectedSequence != null){
 				//console.log(selectedSequence+ " : "+ sequences[selectedSequence]);
 				//On retire l'action precendente de la sequence
 				if(selectedSequence.indexOf(".")!=-1){
@@ -183,8 +175,4 @@ public class IA {
 	public int getScore() {
 		return score;
 	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}	
 }
