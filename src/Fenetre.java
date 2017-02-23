@@ -96,18 +96,6 @@ public class Fenetre extends JFrame {
 		}
 	}
 	public void RandObjectif(){
-		/*Random Rand=new Random();
-		int IndexX=Rand.nextInt(28);
-		int IndexY=Rand.nextInt(28);
-		Objectif.setX(IndexX*20);
-		Objectif.setY(IndexY*20);
-		for(Carré T:Snake.getSuit())
-			if(IndexX*20==T.getX()&&IndexY*20==T.getY()){
-				this.RandObjectif();	
-			}
-		if(IndexX*20==Snake.getTete().getX()&&IndexY*20==Snake.getTete().getY()){
-			this.RandObjectif();
-		}*/
 		Objectif.setX(50);
 		Objectif.setY(50);
 	}
@@ -139,8 +127,7 @@ public class Fenetre extends JFrame {
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
 				
 				Collision col = new Collision(T.getX(), T.getY());
-			//	col.writeFile();
-				
+			
 				System.out.println("GAME OVER");
 				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 				Snake.Réinitialiser();
