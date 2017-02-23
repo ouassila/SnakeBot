@@ -17,13 +17,13 @@ public class IA {
 	private String lastAction;
 	private Map<String, Integer> sequences;
 	
-	public static int SCORE_LEFT = -5;
-	public static int SCORE_RIGHT = -5;
-	public static int SCORE_TOP = 10;
+	public static int SCORE_LEFT = 5;
+	public static int SCORE_RIGHT = 50;
+	public static int SCORE_TOP = 5;
 	public static int SCORE_BOTTOM = 5;
-	public static int SCORE_COLLISION = -20;
-	public static int SCORE_POMME = 50;
-	public static int SCORE_VERS_POMME = 20;
+	public static int SCORE_COLLISION = -80;
+	public static int SCORE_POMME = 100;
+	public static int SCORE_VERS_POMME = 30;
 	public static int SCORE_NON_VERS_POMME = -20;
 	
 	private int score;

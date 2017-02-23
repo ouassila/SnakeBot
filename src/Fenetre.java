@@ -48,7 +48,7 @@ public class Fenetre extends JFrame {
 			Moyenne=new JRadioButtonMenuItem("Moyenne"),
 			Rapide=new JRadioButtonMenuItem("Rapide"),
 			TRapide=new JRadioButtonMenuItem("Trés rapide"); 
-	private int vitesse=200,Score=0;
+	private int vitesse=800,Score=0;
 	private boolean pause=false;
 	String direction; 
 	private IA bot;
@@ -70,7 +70,7 @@ public class Fenetre extends JFrame {
 		this.add(PlateauJeu1,BorderLayout.CENTER);
 		LabelScore.setBorder(BorderFactory.createBevelBorder(1));
 		LabelScore.setFont(new Font("Arial",Font.BOLD,20));
-		LabelScore.setForeground(Color.PINK);
+		LabelScore.setForeground(Color.PINK);		
 		this.add(LabelScore,BorderLayout.SOUTH);
 		this.addKeyListener(new KeyListener() {
 
@@ -122,7 +122,7 @@ public class Fenetre extends JFrame {
 			Snake.AjouterCarré();
 			RandObjectif();
 			Score+=10;
-			LabelScore.setText("SCORE: "+bot.getScore());
+			//LabelScore.setText("SCORE: "+bot.getScore());
 		}
 		else {
 			if(a!=0){
@@ -130,12 +130,18 @@ public class Fenetre extends JFrame {
 				old_distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
 				Snake.AvancerSerpent();
 				distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
+				
+				System.out.println(distance +" != "+ old_distance);
+				
 				if (distance > old_distance)
-					bot.updateMemory(Snake.getDirection(), bot.getScore() + bot.SCORE_NON_VERS_POMME);
+					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_NON_VERS_POMME));
 				else
-					bot.updateMemory(Snake.getDirection(), bot.getScore() + bot.SCORE_VERS_POMME);
+					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_VERS_POMME));
 			}
 		}
+
+		LabelScore.setText("SCORE : "+bot.getScore());
+		
 		for(Carré T:Snake.getSuit()){
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
 
