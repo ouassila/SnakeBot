@@ -31,7 +31,7 @@ public class Fenetre extends JFrame {
 	 */
 	private static final long serialVersionUID = 9134711996673092449L;
 	private Carré Objectif=new Carré(0,0,20);
-	private Serpent Snake=new Serpent("X");
+	private Serpent Snake=new Serpent("right");
 	private PlateauJeu PlateauJeu1;
 	private JLabel LabelScore=new JLabel("SCORE: 0");
 	private JMenuBar MenuPrincipale=new JMenuBar();
@@ -52,6 +52,7 @@ public class Fenetre extends JFrame {
 	private boolean pause=false;
 	String direction; 
 	private IA bot;
+	private double distance, old_distance;
 
 	public Fenetre(){
 
@@ -117,21 +118,28 @@ public class Fenetre extends JFrame {
 
 		if((Snake.getTete().getX()==Objectif.getX())&&(Snake.getTete().getY()==Objectif.getY()))
 		{
+			bot.updateMemory(Snake.getDirection(), bot.SCORE_POMME);
 			Snake.AjouterCarré();
 			RandObjectif();
 			Score+=10;
-			LabelScore.setText("SCORE: "+Score);
+			LabelScore.setText("SCORE: "+bot.getScore());
 		}
 		else {
 			if(a!=0){
+				//Math.sqrt(Math.pow((xb-xa), 2)+Math.pow((yb-ya), 2))
+				old_distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
 				Snake.AvancerSerpent();
-				bot.updateMemory(Snake.getDirection()+"", bot.getScore());
+				distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
+				if (distance > old_distance)
+					bot.updateMemory(Snake.getDirection(), bot.getScore() + bot.SCORE_NON_VERS_POMME);
+				else
+					bot.updateMemory(Snake.getDirection(), bot.getScore() + bot.SCORE_VERS_POMME);
 			}
 		}
 		for(Carré T:Snake.getSuit()){
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
 
-				bot.updateMemory(Snake.getDirection()+"", bot.SCORE_COLLISION);
+				bot.updateMemory(Snake.getDirection(), bot.SCORE_COLLISION);
 
 				System.out.println("GAME OVER");
 				Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -143,7 +151,7 @@ public class Fenetre extends JFrame {
 		}
 		if(Snake.getTete().getX()<0||Snake.getTete().getX()>20*30-40||Snake.getTete().getY()<0||Snake.getTete().getY()>20*30-40)
 		{
-			bot.updateMemory(Snake.getDirection()+"", bot.SCORE_COLLISION);
+			bot.updateMemory(Snake.getDirection(), bot.SCORE_COLLISION);
 
 			System.out.println("GAME OVER");
 			Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);

@@ -22,6 +22,9 @@ public class IA {
 	public static int SCORE_TOP = 10;
 	public static int SCORE_BOTTOM = 5;
 	public static int SCORE_COLLISION = -20;
+	public static int SCORE_POMME = 50;
+	public static int SCORE_VERS_POMME = 20;
+	public static int SCORE_NON_VERS_POMME = -20;
 	
 	private int score;
 
@@ -36,9 +39,8 @@ public class IA {
 		listAction.add("left");
 		listAction.add("right");
 		listAction.add("top");
-		listAction.add("bottom");
+		listAction.add("bottom");	
 		
-		sequences = new HashMap<String, Integer>();
 		nbrNodes= 0;		
 	}	
 
@@ -54,14 +56,15 @@ public class IA {
 		}		
 	}
 
-	public String chooseBestAction(){		
+	public String chooseBestAction(){	
 		if(memories.size() < listAction.size()){
 			return listAction.get(memories.size());
 		}
 		else{
 			try {
 				lastAction = memories.get(memories.size()-1).getString("action");			
-
+				sequences = new HashMap<String, Integer>();
+				
 				for(int i = (int) Math.floor(Math.random() * memories.size()); i<memories.size(); i++){
 					
 					if(memories.get(i).getString("action")==lastAction){
@@ -84,12 +87,12 @@ public class IA {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			int bestPerformance = 0;
 			String selectedSequence = "";
-
-
-			for(Entry<String, Integer> n : sequences.entrySet()) {
-
+			
+			for(Entry<String, Integer> n : sequences.entrySet()) {			
+				
 				if(n.getKey().indexOf(".") != -1 && n.getKey().substring(0, n.getKey().indexOf(".")) == lastAction){
 					if(n.getValue()>bestPerformance){
 						bestPerformance= n.getValue();
@@ -98,7 +101,7 @@ public class IA {
 				}	
 			}
 
-			if(selectedSequence != null){
+			if(selectedSequence != ""){
 				//console.log(selectedSequence+ " : "+ sequences[selectedSequence]);
 				//On retire l'action precendente de la sequence
 				if(selectedSequence.indexOf(".")!=-1){
@@ -107,8 +110,6 @@ public class IA {
 				//retour de l'action
 				if(selectedSequence.indexOf(".")!=-1){
 					return selectedSequence.substring(0, selectedSequence.indexOf("."));
-				}else{
-					return selectedSequence;
 				}
 			}
 
@@ -122,39 +123,11 @@ public class IA {
 	}
 
 	public void bouger(Serpent snake, Fenetre fenetre) throws IOException{
-		
-		/*Random randomizer = new Random();
-		int direction = directions.get(randomizer.nextInt(directions.size()));
-		
-		System.out.println(direction);
-
-		switch(direction){
-		//gauche
-		case 37:
-			if(snake.getDirection()!='D'&&snake.getDirection()!='X')
-				snake.setDirection('G');fenetre.Jouer(0);
-				break;
-		//up
-		case 38:
-			if(snake.getDirection()!='B')
-				snake.setDirection('H');fenetre.Jouer(0);
-				break;
-		//droite
-		case 39:
-			if(snake.getDirection()!='G')
-				snake.setDirection('D');fenetre.Jouer(0);
-				break;
-		//bas
-		case 40:
-			if(snake.getDirection()!='H')
-				snake.setDirection('B');fenetre.Jouer(0);
-				break;
-		}*/
-		
+				
 		String direct = chooseBestAction();
 		System.out.println(direct);
 		
-		if(direct == "left" && snake.getDirection()!="right" && snake.getDirection()!= "X"){
+		if(direct == "left" && snake.getDirection()!="right"){
 			score = SCORE_LEFT;
 			snake.setDirection("left");fenetre.Jouer(0);			
 		}

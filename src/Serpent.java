@@ -45,7 +45,7 @@ public class Serpent {
 	public void Réinitialiser(){
 		this.Suit.clear();
 		NbrCarré=3;
-		this.Direction="X";
+		this.Direction="right";
 		Tete=new Carré(60,280,20);
 		Suit.add(new Carré(Tete.getX()-Tete.getTailleCarré(),Tete.getY(),Tete.getTailleCarré()));
 		for(int i=1;i<NbrCarré;i++)
