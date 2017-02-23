@@ -1,22 +1,26 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
+import java.lang.reflect.Type;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class IA {
 
 	private static ArrayList<Integer> directions;
 	private ArrayList<String> listAction = new ArrayList<String>();
 	private int nbrNodes;
-	private ArrayList<JSONObject> memories = new ArrayList<JSONObject>();
+	private Map<String,JSONObject> memories = new HashMap<String,JSONObject>() ;
 	private String lastAction;
 	private Map<String, Integer> sequences;
-	
+	private String lastState;
+
 	public static int SCORE_LEFT = 5;
 	public static int SCORE_RIGHT = 50;
 	public static int SCORE_TOP = 5;
@@ -25,8 +29,8 @@ public class IA {
 	public static int SCORE_POMME = 100;
 	public static int SCORE_VERS_POMME = 30;
 	public static int SCORE_NON_VERS_POMME = -20;
-	
-	private int score;
+
+	private int score, bestValue;
 
 	public IA(){
 		score = 0;
@@ -40,16 +44,53 @@ public class IA {
 		listAction.add("right");
 		listAction.add("top");
 		listAction.add("bottom");	
-		
-		nbrNodes= 0;		
-	}	
 
+		nbrNodes= 0;	
+		bestValue = 0;
+	}	
+	
+	public int bestNodeMemory(){
+		try {
+			for(int i = 0; i < memories.size(); i++){
+
+				if(memories.get(i).getInt("value") == bestValue){
+					return i;
+				}
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@SuppressWarnings("unchecked")
 	public void updateMemory(String action, int result){
 		try {
-			JSONObject memory = new JSONObject();
-			memory.put("action", action);
-			memory.put("result", result);
-			memories.add(memory);
+			String state = action +":"+result;
+
+			if(memories.get(state) == null){
+				JSONObject memory = new JSONObject();
+				memory.put("action", action);
+				memory.put("result", result);
+				memory.put("adjacentTo", new ArrayList<String>());
+				memories.put(state, memory);
+			}
+
+			if(lastState!=null){
+				Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+				//List<String> adj = new Gson().fromJson(memories.get(lastState).get("adjacentTo"), listType);
+				/*
+				if(adj.indexOf(state)==-1){					
+					adj.add(state);
+				}
+				*/
+			}
+			score+= result;
+			lastState= state;
+			if(result>bestValue){
+				bestValue= result;
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,76 +98,51 @@ public class IA {
 	}
 
 	public String chooseBestAction(){	
-		if(memories.size() < listAction.size()){
-			return listAction.get(memories.size());
-		}
-		else{
+		String action = "";
+		if(memories.size() < 10){
+			return listAction.get((int) Math.floor(Math.random()*this.listAction.size()));
+		} else
 			try {
-				lastAction = memories.get(memories.size()-1).getString("action");			
-				sequences = new HashMap<String, Integer>();
-				
-				for(int i = (int) Math.floor(Math.random() * memories.size()); i<memories.size(); i++){
+				if(((ArrayList<String>)memories.get(lastState).get("adjacentTo")).size()<10-1){
+					do{
+						action = this.listAction.get((int)Math.floor(Math.random()*this.listAction.size()));
+					}while(((ArrayList<String>)memories.get(lastState).get("adjacentTo")).indexOf(action)!=-1);
+					return action;
+				}
+				else{			
 					
-					if(memories.get(i).getString("action")==lastAction){
-						String tempSequence = memories.get(i).getString("action");
-
-						for(int j=i; j<memories.size() && j<Math.floor(Math.random() * (i+20 - i)) + i; j++){
-
-							if(i == j){
-								sequences.put(tempSequence, memories.get(i).getInt("result"));
-							}
-							else{
-								int tempResult = sequences.get(tempSequence);
-								tempSequence+="."+memories.get(j).getString("action");
-								sequences.put(tempSequence, memories.get(j).getInt("result") + tempResult);
-							}
+					int selectedValue= -1000;
+					ArrayList<JSONObject> selectedResult = new ArrayList<JSONObject>();
+					
+					for(String item : ((ArrayList<String>)memories.get(lastState).get("adjacentTo"))){
+						
+						if(memories.get(item).getInt("result") > selectedValue){
+							selectedValue = memories.get(item).getInt("result");
+							selectedResult = new ArrayList<JSONObject>();
+							JSONObject tmp = new JSONObject();
+							tmp.put("action", memories.get(item).getString("action"));
+							selectedResult.add(tmp);
+						}
+						else if(memories.get(item).getInt("result")==selectedValue){
+							JSONObject tmp = new JSONObject();
+							tmp.put("action", memories.get(item).getString("action"));
+							selectedResult.add(tmp);
 						}
 					}
+					return selectedResult.get((int) Math.floor(Math.random()*selectedResult.size())).getString("action");				
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			int bestPerformance = 0;
-			String selectedSequence = "";
-			
-			for(Entry<String, Integer> n : sequences.entrySet()) {			
-				
-				if(n.getKey().indexOf(".") != -1 && n.getKey().substring(0, n.getKey().indexOf(".")) == lastAction){
-					if(n.getValue()>bestPerformance){
-						bestPerformance= n.getValue();
-						selectedSequence = n.getKey();
-					}
-				}	
-			}
-
-			if(selectedSequence != ""){
-				//console.log(selectedSequence+ " : "+ sequences[selectedSequence]);
-				//On retire l'action precendente de la sequence
-				if(selectedSequence.indexOf(".")!=-1){
-					selectedSequence= selectedSequence.substring(selectedSequence.indexOf(".")+1, selectedSequence.length());
-				}
-				//retour de l'action
-				if(selectedSequence.indexOf(".")!=-1){
-					return selectedSequence.substring(0, selectedSequence.indexOf("."));
-				}
-			}
-
-			String bestAction = "";
-			do{
-				bestAction = this.listAction.get((int)Math.floor(Math.random()*this.listAction.size()));
-			}while(sequences.get(lastAction+"."+bestAction) != null && sequences.get(bestAction)!= null);
-
-			return bestAction;	
-		}
+		return "";
 	}
 
 	public void bouger(Serpent snake, Fenetre fenetre) throws IOException{
-				
+
 		String direct = chooseBestAction();
 		System.out.println(direct);
-		
+
 		if(direct == "left" && snake.getDirection()!="right"){
 			score = SCORE_LEFT;
 			snake.setDirection("left");fenetre.Jouer(0);			
