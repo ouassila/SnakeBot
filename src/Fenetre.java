@@ -48,7 +48,7 @@ public class Fenetre extends JFrame {
 			Moyenne=new JRadioButtonMenuItem("Moyenne"),
 			Rapide=new JRadioButtonMenuItem("Rapide"),
 			TRapide=new JRadioButtonMenuItem("Trés rapide"); 
-	private int vitesse=20,Score=0;
+	private int vitesse=2000,Score=0;
 	private boolean pause=false;
 	String direction; 
 	private IA bot;
@@ -97,13 +97,28 @@ public class Fenetre extends JFrame {
 		}
 	}
 	public void RandObjectif(){
-		Objectif.setX(50);
-		Objectif.setY(50);
+		Objectif.setX(140);
+		Objectif.setY(300);
+	}
+	public void RandObjectif2(){
+		Random Rand=new Random();
+		int IndexX=Rand.nextInt(28);
+		int IndexY=Rand.nextInt(28);
+		Objectif.setX(IndexX*20);
+		Objectif.setY(IndexY*20);
+		for(Carré T:Snake.getSuit())
+			if(IndexX*20==T.getX()&&IndexY*20==T.getY()){
+				this.RandObjectif();	
+			}
+		if(IndexX*20==Snake.getTete().getX()&&IndexY*20==Snake.getTete().getY()){
+			this.RandObjectif();
+		}
 	}
 	public void Start() throws IOException{	
-		while(true){			
-			bot.bouger(Snake, this);
+		while(true){		
 			Jouer(1);
+			bot.bouger(Snake, this);
+
 			try {
 				Thread.sleep(vitesse);
 			} catch (InterruptedException e) {
@@ -115,12 +130,12 @@ public class Fenetre extends JFrame {
 
 	@SuppressWarnings("static-access")
 	public void Jouer(int a){
-
+		System.out.println("X : " + Snake.getTete().getX() + " Y : " + Snake.getTete().getY());
 		if((Snake.getTete().getX()==Objectif.getX())&&(Snake.getTete().getY()==Objectif.getY()))
 		{
 			bot.updateMemory(Snake.getDirection(), bot.SCORE_POMME);
 			Snake.AjouterCarré();
-			RandObjectif();
+			RandObjectif2();
 			Score+=10;
 			System.out.println("POMME MANGER");
 			//LabelScore.setText("SCORE: "+bot.getScore());
@@ -131,16 +146,21 @@ public class Fenetre extends JFrame {
 				old_distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
 				Snake.AvancerSerpent();
 				distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
-				
-				if (distance > old_distance)
+
+				if (distance > old_distance){
+					System.out.println("pomme eloigné");
 					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_NON_VERS_POMME));
+				}
 				else
+				{
+					System.out.println("pomme proche");
 					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_VERS_POMME));
+				}
 			}
 		}
 
 		LabelScore.setText("SCORE : "+bot.getScore());
-		
+
 		for(Carré T:Snake.getSuit()){
 			if(Snake.getTete().getX()==T.getX()&&Snake.getTete().getY()==T.getY()){
 
@@ -149,6 +169,8 @@ public class Fenetre extends JFrame {
 				System.out.println("GAME OVER");
 				//Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
 				Snake.Réinitialiser();
+				RandObjectif();
+				bot.setLastAction("right");
 				Score=0;
 				LabelScore.setText("SCORE: 0");
 				break;
@@ -160,6 +182,8 @@ public class Fenetre extends JFrame {
 
 			System.out.println("GAME OVER");
 			//Information.showMessageDialog(null,"                Game Over\nCliquez sur OK pour recommencer","Information",JOptionPane.INFORMATION_MESSAGE);
+			RandObjectif();
+			bot.setLastAction("right");
 			Snake.Réinitialiser();
 			Score=0;
 			LabelScore.setText("SCORE: 0");
