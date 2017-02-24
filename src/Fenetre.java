@@ -148,13 +148,13 @@ public class Fenetre extends JFrame {
 				distance = Math.sqrt(Math.pow((Snake.getTete().getY() - Objectif.getY()), 2) + Math.pow((Snake.getTete().getX() - Objectif.getX()), 2));
 
 				if (distance > old_distance){
-					System.out.println("pomme eloigné");
-					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_NON_VERS_POMME));
+					System.out.println("pomme eloigné " + distance);
+					bot.updateMemory(Snake.getDirection(), (int)(distance * bot.SCORE_NON_VERS_POMME));
 				}
 				else
 				{
 					System.out.println("pomme proche");
-					bot.updateMemory(Snake.getDirection(), (bot.getScore() + bot.SCORE_VERS_POMME));
+					bot.updateMemory(Snake.getDirection(), (int)(distance * bot.SCORE_VERS_POMME));
 				}
 			}
 		}

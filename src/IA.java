@@ -35,10 +35,10 @@ public class IA {
 	public static int SCORE_RIGHT = 5;
 	public static int SCORE_TOP = 5;
 	public static int SCORE_BOTTOM = 5;
-	public static int SCORE_COLLISION = -15;
+	public static int SCORE_COLLISION = -20;
 	public static int SCORE_POMME = 20;
-	public static int SCORE_VERS_POMME = 10;
-	public static int SCORE_NON_VERS_POMME = -5;
+	public static int SCORE_VERS_POMME = 2;
+	public static int SCORE_NON_VERS_POMME = -2;
 
 	private int score, bestValue;
 
@@ -153,10 +153,10 @@ public class IA {
 				int currentLevel = 0;
 				exploredNode.add(lastState);
 				int parcourVal = -100000;
-				while(visitedNode.indexOf(bestNode)==-1){
+				while(exploredNode.size()>0 && exploredNode.indexOf(bestNode)==-1){
 					String selectedNode = null;
 					int selectedValue = -100000;
-					int parcourValue = -100000;
+					visitedNode.add(currentState);
 					Type listType = new TypeToken<ArrayList<String>>(){}.getType();
 					List<String> adj = new Gson().fromJson(memories.get(currentState).get("adjacentTo").toString(), listType);
 					for(String item : adj){
@@ -171,7 +171,9 @@ public class IA {
 								scoresValues.put(selectedValue, memory);
 							}
 							else {
-								int scoreFinal = scoresValues.get(selectedValue).getInt("score")+memories.get(selectedNode).getInt("result");
+								System.out.println(scoresValues.get(currentState).getInt("score"));
+								System.out.println(memories.get(selectedNode).getInt("result"));
+								int scoreFinal = scoresValues.get(currentState).getInt("score")+memories.get(selectedNode).getInt("result");
 								JSONObject memory = new JSONObject();
 								memory.put("passBy", selectedNode);
 								memory.put("score",scoreFinal);
@@ -179,24 +181,28 @@ public class IA {
 								scoresValues.put(selectedValue, memory);
 							}
 						}
-						visitedNode.add(item);
+						exploredNode.add(item);
 					}
 					ArrayList<JSONObject> selectNextNodeToExplore = null;
 					for(Entry<Integer, JSONObject> entry : scoresValues.entrySet()) {
-						if(scoresValues.get(entry.getKey()).getInt("score")> parcourValue && scoresValues.get(entry.getKey()).getInt("level")==currentLevel){
-							parcourValue = scoresValues.get(entry.getKey()).getInt("score");
-							parcourVal = parcourValue;
+						if(scoresValues.get(entry.getKey()).getInt("score")> parcourVal && scoresValues.get(entry.getKey()).getInt("level")==currentLevel){
+							parcourVal = scoresValues.get(entry.getKey()).getInt("score");
 							selectNextNodeToExplore = new ArrayList<JSONObject>();
 							JSONObject memory = new JSONObject();
 							memory.put("action", scoresValues.get(entry.getKey()).getString("passBy"));
 							selectNextNodeToExplore.add(memory);
 						}
-						else if(scoresValues.get(entry.getKey()).getInt("score")==parcourValue && scoresValues.get(entry.getKey()).getInt("level")==currentLevel){
+						else if(scoresValues.get(entry.getKey()).getInt("score")==parcourVal && scoresValues.get(entry.getKey()).getInt("level")==currentLevel){
 							JSONObject memory = new JSONObject();
 							memory.put("action", scoresValues.get(entry.getKey()).getString("passBy"));
 							selectNextNodeToExplore.add(memory);
 						}
 					}
+					System.out.println("************");
+					System.out.println(selectNextNodeToExplore.toString());
+					System.out.println(selectNextNodeToExplore.get(0).toString());
+					System.out.println(Math.floor(Math.random()*selectNextNodeToExplore.size()));
+					currentState=selectNextNodeToExplore.get((int) Math.floor(Math.random()*selectNextNodeToExplore.size())).getString("action");
 					currentLevel++;
 				}
 				for(Entry<Integer, JSONObject> entry : scoresValues.entrySet()){
